@@ -1,9 +1,11 @@
 from .base import Base
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import ForeignKey, UniqueConstraint, Table, Column, Enum
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey, UniqueConstraint, Enum
 from decimal import Decimal
+from .specialty import association_table
 from .utils import Roles
 from .common import deffalse
+from typing import List
 
 
 class User(Base):
@@ -12,24 +14,17 @@ class User(Base):
     email: Mapped[str]
     first_name: Mapped[str]
     last_name: Mapped[str]
-
     role: Mapped[str] = mapped_column(Enum(Roles))
-
     calary: Mapped[Decimal] = mapped_column(default=0)
-
     phone_number: Mapped[str] = mapped_column(nullable=True)
-
     hashed_password: Mapped[str]
 
+    specialties: Mapped[List["Specialty"]] = relationship(
+        secondary="doctors", secondary=association_table
+    )
+
+    working_days: Mapped["WorkingDays"] = relationship(back_populates="doctor")
     __table_args__ = (UniqueConstraint("email", "phone_number"),)
-
-
-association_table = Table(
-    "doctor_special",
-    Base.metadata,
-    Column("doctor_id", ForeignKey("users.id"), primary_key=True),
-    Column("specialty_id", ForeignKey("specialty.id"), primary_key=True),
-)
 
 
 class WorkingDays(Base):
@@ -43,8 +38,4 @@ class WorkingDays(Base):
     saturday: Mapped[deffalse]
     sunday: Mapped[deffalse]
 
-
-class Specialty(Base):
-    __tablename__ = "specialty"
-
-    title: Mapped[str]
+    doctor: Mapped["User"] = relationship(back_populates="working_days")
