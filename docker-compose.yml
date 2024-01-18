@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+  web:
+    build:
+      context: .
+    env_file: .env
+    container_name: mediflow_web
+    ports:
+      - 8000:8000
+    command: "uvicorn src.web.main:app --host 0.0.0.0 --port 8000 --reload"
