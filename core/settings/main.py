@@ -17,4 +17,10 @@ class SQLAlhemySettings:
         return f"postgresql+asyncpg://{self.DB_USERNAME}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
 
+class Settings:
+    SECRET_KEY = os.getenv("SECRET_KEY")
+
+
+settings = Settings()
+
 sqlsetting = SQLAlhemySettings()

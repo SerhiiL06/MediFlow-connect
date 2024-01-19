@@ -3,8 +3,19 @@ services:
   web:
     build:
       context: .
-    env_file: .env
+    env_file: .env-docker
     container_name: mediflow_web
     ports:
       - 8000:8000
-    command: "uvicorn src.web.main:app --host 0.0.0.0 --port 8000 --reload"
+    volumes:
+      - .:/app
+    command: sh -c "alembic upgrade head && uvicorn src.web.main:app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15.5-alpine3.19
+    env_file: .env-docker
+    command: -p 5432
+    expose:
+      - 5432

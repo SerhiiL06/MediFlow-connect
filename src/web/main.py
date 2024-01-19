@@ -1,16 +1,7 @@
 from fastapi import FastAPI
-from core.settings.connections import session
-from core.models.specialty import Specialty
-from sqlalchemy import select
+from src.presentation.endpoints.users import user_router
 
 app = FastAPI()
 
 
-@app.get("/")
-async def hello():
-    async with session() as conn:
-        query = select(Specialty)
-
-        result = await conn.execute(query)
-
-        return result.mappings().all()
+app.include_router(user_router)

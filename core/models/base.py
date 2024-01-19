@@ -1,7 +1,6 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped
-from .common import pkid, create
+from .common import pkid
 
 
 class Base(DeclarativeBase):
     id: Mapped[pkid]
-    created_at: Mapped[create]

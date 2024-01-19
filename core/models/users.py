@@ -4,8 +4,18 @@ from sqlalchemy import ForeignKey, UniqueConstraint, Enum
 from decimal import Decimal
 from .specialty import association_table
 from .utils import Roles
-from .common import deffalse
+from .common import deffalse, create
 from typing import List
+
+
+class Specialty(Base):
+    __tablename__ = "specialty"
+
+    title: Mapped[str]
+
+    doctors: Mapped[List["User"]] = relationship(
+        secondary=association_table, back_populates="specialties"
+    )
 
 
 class User(Base):
@@ -19,8 +29,10 @@ class User(Base):
     phone_number: Mapped[str] = mapped_column(nullable=True)
     hashed_password: Mapped[str]
 
+    join_at: Mapped[create]
+
     specialties: Mapped[List["Specialty"]] = relationship(
-        secondary="doctors", secondary=association_table
+        back_populates="doctors", secondary=association_table
     )
 
     working_days: Mapped["WorkingDays"] = relationship(back_populates="doctor")

@@ -1,8 +1,8 @@
-"""init commit and create user, doctor and specialty models
+"""create models
 
-Revision ID: 86c923ac0a4d
+Revision ID: 665839a46e8c
 Revises: 
-Create Date: 2024-01-18 21:31:47.640016
+Create Date: 2024-01-19 16:30:11.970685
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "86c923ac0a4d"
+revision: str = "665839a46e8c"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -39,10 +39,10 @@ def upgrade() -> None:
         ),
         sa.Column("calary", sa.Numeric(), nullable=False),
         sa.Column("phone_number", sa.String(), nullable=True),
-        sa.Column(
-            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
-        ),
         sa.Column("hashed_password", sa.String(), nullable=False),
+        sa.Column(
+            "join_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+        ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("email", "phone_number"),
     )
