@@ -1,11 +1,11 @@
 from logging.config import fileConfig
-from core.models.base import Base
-from core.models.users import User, Specialty, WorkingDays, association_table
-from sqlalchemy import engine_from_config
-from core.settings.main import sqlsetting
-from sqlalchemy import pool
 
 from alembic import context
+from sqlalchemy import engine_from_config, pool
+
+from core.models.base import Base
+from core.models.users import Specialty, User, WorkingDays, association_table
+from core.settings.main import sqlsetting
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

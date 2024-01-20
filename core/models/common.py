@@ -1,8 +1,8 @@
-from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped
-from sqlalchemy import func
-from typing import Annotated
 from datetime import datetime
+from typing import Annotated
 
+from sqlalchemy import func
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 pkid = Annotated[int, mapped_column(primary_key=True, autoincrement=True)]
 

@@ -1,7 +1,9 @@
-from sqlalchemy.orm import Mapped, relationship
-from sqlalchemy import Table, Column, ForeignKey
-from .base import Base
 from typing import List
+
+from sqlalchemy import Column, ForeignKey, Table
+from sqlalchemy.orm import Mapped, relationship
+
+from .base import Base
 
 association_table = Table(
     "doctor_special",

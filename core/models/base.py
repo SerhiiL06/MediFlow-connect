@@ -1,4 +1,5 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped
+
 from .common import pkid
 
 

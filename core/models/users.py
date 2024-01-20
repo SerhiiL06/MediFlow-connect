@@ -1,11 +1,13 @@
-from .base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, UniqueConstraint, Enum
 from decimal import Decimal
+from typing import List
+
+from sqlalchemy import Enum, ForeignKey, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from .base import Base
+from .common import create, deffalse
 from .specialty import association_table
 from .utils import Roles
-from .common import deffalse, create
-from typing import List
 
 
 class Specialty(Base):

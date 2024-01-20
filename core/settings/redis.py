@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from redis import asyncio as aioredis
 
 
@@ -8,7 +9,14 @@ class RedisTools:
         await self.__CONNECT_POINT.lpush(email, first_name, last_name, role)
 
     async def get_user_info(self, email):
-        return await self.__CONNECT_POINT.lrange(email, 0, 2)
+        data = await self.__CONNECT_POINT.lrange(email, 0, 2)
+
+        if not data:
+            raise HTTPException(
+                status_code=404, detail={"message": "data doesnt exists"}
+            )
+
+        return data
 
     async def clean_arr(self, email):
         await self.__CONNECT_POINT.delete(email)
