@@ -23,7 +23,7 @@ class Specialty(Base):
 class User(Base):
     __tablename__ = "users"
 
-    email: Mapped[str]
+    email: Mapped[str] = mapped_column(unique=True)
     first_name: Mapped[str]
     last_name: Mapped[str]
     role: Mapped[str] = mapped_column(Enum(Roles))
