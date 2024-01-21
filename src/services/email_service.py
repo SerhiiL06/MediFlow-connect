@@ -18,3 +18,15 @@ class EmailService:
         )
 
         await self.email.send_message(message)
+
+    async def send_user_creditables(self, email, password):
+        body = f"Your record was register successfully, your times creditabples are: -email {email} -password {password}"
+
+        message = MessageSchema(
+            subject="Record was register",
+            recipients=[email],
+            body=body,
+            subtype="html",
+        )
+
+        await self.email.send_message(message)

@@ -59,7 +59,7 @@ class AdminService(ManagerService):
             "hashed_password": hash_pw,
         }
 
-        user_id = await self.crud.register_employee(data_to_save)
+        user_id = await self.crud.create_model(data_to_save)
 
         await self.redis.clean_arr(email)
 

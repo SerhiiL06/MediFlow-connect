@@ -3,11 +3,12 @@ from typing import List
 
 from sqlalchemy import Enum, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
+from typing import List
 from .base import Base
 from .common import create, deffalse
 from .specialty import association_table
 from .utils import Roles
+from .records import Record
 
 
 class Specialty(Base):
@@ -38,6 +39,13 @@ class User(Base):
     )
 
     working_days: Mapped["WorkingDays"] = relationship(back_populates="doctor")
+
+    patient_records: Mapped[List["Record"]] = relationship(
+        back_populates="patient", foreign_keys=[Record.patient_id]
+    )
+    doctor_records: Mapped[List["Record"]] = relationship(
+        back_populates="doctor", foreign_keys=[Record.doctor_id]
+    )
     __table_args__ = (UniqueConstraint("email", "phone_number"),)
 
 
