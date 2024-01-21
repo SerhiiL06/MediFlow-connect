@@ -13,3 +13,6 @@ class AbstractRepository(ABC):
 
     def delete_model(self):
         raise NotImplemented()
+
+    def get_user_by_email(self, email):
+        raise NotImplemented()

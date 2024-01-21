@@ -8,10 +8,10 @@ from core.settings.main import settings
 from core.settings.redis import RedisTools
 from src.services.email_service import EmailService
 
-from .user_service import UserService
+from .manager_service import ManagerService
 
 
-class AdminService(UserService):
+class AdminService(ManagerService):
     def __init__(self):
         super().__init__()
 
