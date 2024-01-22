@@ -1,7 +1,7 @@
 import jwt
 from fastapi import HTTPException, Depends
 from core.settings.main import settings
-from src.repositories.user_repository import UserRepository
+from src.repositories.ManagerRepository import ManagerRepository
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from datetime import datetime, timedelta
 from src.utils.crypt import crypt
@@ -13,7 +13,7 @@ bearer = OAuth2PasswordBearer(tokenUrl="users/token")
 
 class AuthService:
     def __init__(self):
-        self.repository = UserRepository()
+        self.repository = ManagerRepository()
 
     async def create_token(self, data: OAuth2PasswordRequestForm):
         check_exists = await self.repository.get_user_by_email(data.username)

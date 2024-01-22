@@ -2,10 +2,11 @@ from src.presentation.schemes.record_schemes import CreateRecordScheme
 from core.models.records import Record
 import secrets
 from random import randint
-from src.repositories.record_repository import RecordRepository
+from src.repositories.RecordRepository import RecordRepository
 from src.services.email_service import EmailService
 from src.utils.crypt import crypt
 from fastapi import HTTPException
+from typing import Literal
 
 
 class PatientService:
@@ -53,8 +54,11 @@ class PatientService:
 
         return result
 
-    async def patient_records(self, user_id):
-        to_filter_data = {"patient_id": user_id}
+    async def get_records(self, user_id, role: Literal["patient", "doctor"]):
+        if role == "patient":
+            to_filter_data = {"patient_id": user_id}
+        else:
+            to_filter_data = {"doctor_id": user_id}
         query = await self.crud.list_model(Record, to_filter_data)
 
         return query

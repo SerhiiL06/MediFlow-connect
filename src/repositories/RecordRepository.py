@@ -1,4 +1,4 @@
-from .crud_repository import SQLAchemyRepository
+from .CrudRepository import SQLAchemyRepository
 from core.settings.connections import session
 from sqlalchemy import insert
 from core.models.records import Record

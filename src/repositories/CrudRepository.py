@@ -1,10 +1,9 @@
 from abc import ABC
 from core.settings.connections import session
 from core.models.base import Base
-from sqlalchemy import insert
 from core.settings.connections import session
 from core.models.users import User
-from sqlalchemy import select, update
+from sqlalchemy import insert, select, update, delete
 
 
 class AbstractRepository(ABC):
@@ -28,8 +27,6 @@ class AbstractRepository(ABC):
 
 
 class SQLAchemyRepository(AbstractRepository):
-    model = None
-
     async def create_model(self, model, data: dict):
         async with session() as conn:
             query = insert(model).values(**data).returning(model.id)
@@ -51,15 +48,38 @@ class SQLAchemyRepository(AbstractRepository):
 
             return result.scalars().all()
 
-    async def update_employee(self, user_id, data: dict):
+    async def retrieve_model(self, model, object_id):
         async with session() as conn:
-            query = update(User).where(User.id == user_id).values(**data)
+            query = select(model).where(model.id == object_id)
+
+            result = await conn.execute(query)
+
+            return result.mappings().one_or_none()
+
+    async def update_model(self, model, object_id, data: dict):
+        async with session() as conn:
+            query = (
+                update(model)
+                .where(model.id == object_id)
+                .values(**data)
+                .returning(model.id)
+            )
 
             await conn.execute(query)
 
             await conn.commit()
 
             return {"message": "user update"}
+
+    async def delete_model(self, model, object_id):
+        async with session() as conn:
+            query = delete(model).where(model.id == object_id)
+
+            await conn.execute(query)
+
+            await conn.commit()
+
+            return {"code": 204, "message": "DELETE"}
 
     async def get_user_by_email(self, email: str) -> User | None:
         async with session() as conn:

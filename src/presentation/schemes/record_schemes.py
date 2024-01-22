@@ -31,4 +31,5 @@ class ReadRecordScheme(BaseModel):
     )
     description: str
     created_at: datetime
+    patient_id: int
     doctor_id: Optional[int] = None

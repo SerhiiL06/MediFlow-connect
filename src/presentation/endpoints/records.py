@@ -35,11 +35,11 @@ async def submit_record(
 async def record_list(
     user: current_user, service: Annotated[PatientService, Depends()]
 ):
-    return await service.patient_records(user.get("user_id"))
+    return await service.get_records(user.get("user_id"), user.get("role"))
 
 
 @record_router.put("/records/{record_id}/appoint-doctor")
 async def appoint_doctor(
-    record_id: int, specialty: str, service: Annotated[ManagerService, Depends()]
+    record_id: int, doctor_id: int, service: Annotated[ManagerService, Depends()]
 ):
-    return await service.to_appoint_doctor()
+    return await service.to_appoint_doctor(record_id, doctor_id)
