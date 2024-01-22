@@ -1,4 +1,5 @@
 from src.presentation.schemes.record_schemes import CreateRecordScheme
+from core.models.records import Record
 import secrets
 from random import randint
 from src.repositories.record_repository import RecordRepository
@@ -35,8 +36,25 @@ class PatientService:
 
         record_to_save = {"description": data.description}
 
-        record_id = await self.crud.create_model(record_to_save, patient_to_save)
+        record_id = await self.crud.submit_record_with_unregister_user(
+            record_to_save, patient_to_save
+        )
 
         await self.email.send_user_creditables(data.email, random_pw)
 
         return record_id
+
+    async def register_record_auth_user(self, data: CreateRecordScheme, user_id: int):
+        data_to_save = data.model_dump(exclude=["recommended_time"])
+
+        data_to_save.update({"patient_id": user_id})
+
+        result = await self.crud.create_model(Record, data_to_save)
+
+        return result
+
+    async def patient_records(self, user_id):
+        to_filter_data = {"patient_id": user_id}
+        query = await self.crud.list_model(Record, to_filter_data)
+
+        return query

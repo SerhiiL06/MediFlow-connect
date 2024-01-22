@@ -6,7 +6,9 @@ from itsdangerous.exc import BadSignature
 
 from core.settings.main import settings
 from core.settings.redis import RedisTools
+from core.models.users import User
 from src.services.email_service import EmailService
+from src.utils.crypt import crypt
 
 from .manager_service import ManagerService
 
@@ -47,25 +49,24 @@ class AdminService(ManagerService):
                 status_code=400, detail={"message": "password must be the same"}
             )
 
-        hash_pw = self.crypt.hash(data.password1)
+        hash_pw = crypt.hash(data.password1)
 
         user_data = await self.redis.get_user_info(email)
 
         data_to_save = {
-            "email": token.get("email"),
+            "email": email,
             "first_name": codecs.decode(user_data[1]),
             "last_name": codecs.decode(user_data[2]),
             "role": codecs.decode(user_data[0]),
             "hashed_password": hash_pw,
         }
 
-        user_id = await self.crud.create_model(data_to_save)
+        user_id = await self.crud.create_model(User, data_to_save)
 
         await self.redis.clean_arr(email)
 
         return {"message": "CREATE", "code": "201", "userId": user_id}
 
-    @classmethod
     def load_token_data(self, token: str) -> str:
         try:
             token = self.token.loads(token)
@@ -76,3 +77,7 @@ class AdminService(ManagerService):
             )
 
         return token.get("email")
+
+    async def update_employee(self, emp_id, data):
+        data_to_update = data.model_dump(exclude_none=True)
+        return await self.crud.update_employee(emp_id, data_to_update)

@@ -2,7 +2,11 @@ from typing import Annotated
 
 from fastapi import APIRouter, BackgroundTasks, Depends
 
-from src.presentation.schemes.user_schemes import InviteEmployee, RegisterEmployeeScheme
+from src.presentation.schemes.user_schemes import (
+    InviteEmployee,
+    RegisterEmployeeScheme,
+    EmployeeUpdateScheme,
+)
 from src.services.role_service.admin_service import AdminService
 from src.services.auth_service import AuthService, current_user
 from fastapi.security import OAuth2PasswordRequestForm
@@ -47,3 +51,12 @@ async def generate_access_token(
     service: Annotated[AuthService, Depends()],
 ):
     return await service.create_token(form)
+
+
+@user_router.put("/employees/{emp_id}/")
+async def update_doctor(
+    emp_id: int,
+    data: EmployeeUpdateScheme,
+    service: Annotated[AdminService, Depends()],
+):
+    return await service.update_employee(emp_id, data)

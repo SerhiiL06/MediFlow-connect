@@ -6,7 +6,9 @@ from core.models.users import User
 
 
 class RecordRepository(SQLAchemyRepository):
-    async def create_model(self, record_data: dict, patient_data: dict):
+    async def submit_record_with_unregister_user(
+        self, record_data: dict, patient_data: dict
+    ):
         async with session() as conn:
             user_query = insert(User).values(**patient_data).returning(User.id)
 

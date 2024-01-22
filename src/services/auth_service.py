@@ -40,7 +40,7 @@ class AuthService:
     def verify_token(self, token):
         data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
 
-        if datetime.now() > datetime.fromtimestamp(data.exp):
+        if datetime.now() > datetime.fromtimestamp(data.get("exp")):
             raise HTTPException(status_code=403, detail={"error": "token exp"})
 
         return data

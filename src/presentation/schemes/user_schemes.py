@@ -1,8 +1,7 @@
 import re
-from typing import Literal
+from typing import Literal, Optional
 
-from pydantic import (BaseModel, ConfigDict, EmailStr, ValidationError,
-                      field_validator)
+from pydantic import BaseModel, ConfigDict, EmailStr, ValidationError, field_validator
 
 
 class InviteEmployee(BaseModel):
@@ -36,3 +35,10 @@ class RegisterEmployeeScheme(BaseModel):
             raise ValidationError()
 
         return value
+
+
+class EmployeeUpdateScheme(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    phone_numper: Optional[str] = None
+    calary: Optional[int] = None
