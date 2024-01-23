@@ -1,26 +1,26 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from src.services.role_service.patient_service import PatientService
 from src.services.role_service.manager_service import ManagerService
 from src.services.auth_service import current_user
 from src.presentation.schemes.record_schemes import (
     CreateRecordScheme,
     SimplyRecordScheme,
-    ReadRecordScheme,
 )
+
 from fastapi import Depends
 from typing import Annotated
 
 record_router = APIRouter()
 
 
-@record_router.post("/create-record")
+@record_router.post("/create-record", tags=["Patient", "Manager", "Admin", "Record"])
 async def create_record(
     data: CreateRecordScheme, service: Annotated[PatientService, Depends()]
 ):
     return await service.register_record(data)
 
 
-@record_router.post("/register-create-record")
+@record_router.post("/register-create-record", tags=["Patient"])
 async def submit_record(
     user: current_user,
     data: SimplyRecordScheme,
@@ -29,16 +29,23 @@ async def submit_record(
     return await service.register_record_auth_user(data, user.get("user_id"))
 
 
-@record_router.get(
-    "/records", response_model=list[ReadRecordScheme], response_model_exclude_none=True
-)
+@record_router.get("/records", tags=["All"], response_model_exclude_none=True)
 async def record_list(
     user: current_user, service: Annotated[PatientService, Depends()]
 ):
     return await service.get_records(user.get("user_id"), user.get("role"))
 
 
-@record_router.put("/records/{record_id}/appoint-doctor")
+@record_router.get("/records/{record_id}", tags=["All"])
+async def get_record_info(
+    user: current_user, record_id: int, service: Annotated[ManagerService, Depends()]
+):
+    return await service.retrieve_record(
+        record_id, user.get("user_id"), user.get("role")
+    )
+
+
+@record_router.put("/records/{record_id}/appoint-doctor", tags=["Admin", "Manager"])
 async def appoint_doctor(
     record_id: int, doctor_id: int, service: Annotated[ManagerService, Depends()]
 ):

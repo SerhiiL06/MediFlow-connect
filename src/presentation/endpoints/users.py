@@ -53,7 +53,7 @@ async def generate_access_token(
     return await service.create_token(form)
 
 
-@user_router.put("/employees/{emp_id}/")
+@user_router.put("/employees/{emp_id}/", tags=["Manager", "Admin"])
 async def update_doctor(
     emp_id: int,
     data: EmployeeUpdateScheme,

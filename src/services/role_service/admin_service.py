@@ -11,6 +11,7 @@ from src.services.email_service import EmailService
 from src.utils.crypt import crypt
 
 from .manager_service import ManagerService
+from src.repositories.AdminRepository import AdminRepository
 
 
 class AdminService(ManagerService):
@@ -20,6 +21,7 @@ class AdminService(ManagerService):
         self.token = URLSafeSerializer(settings.SECRET_KEY, salt="activate")
         self.redis = RedisTools()
         self.email = EmailService()
+        self.crud = AdminRepository()
 
     async def generate_invitation_link(self, data, task: BackgroundTasks) -> dict:
         token = self.token.dumps({"email": data.email})
@@ -81,3 +83,18 @@ class AdminService(ManagerService):
     async def update_employee(self, emp_id, data):
         data_to_update = data.model_dump(exclude_none=True)
         return await self.crud.update_employee(emp_id, data_to_update)
+
+    async def get_user_list(self, role: str):
+        result = await self.crud.list_model(role)
+
+        return result
+
+    async def get_user_info(self, user_id: int):
+        result = await self.crud.retrieve_model(user_id)
+
+        if result is None:
+            raise HTTPException(
+                status_code=404, detail={"message": "User doesnt exists"}
+            )
+
+        return result

@@ -1,16 +1,27 @@
 import re
-from typing import Literal, Optional
+from typing import Literal, Optional, Union, Any
 
-from pydantic import BaseModel, ConfigDict, EmailStr, ValidationError, field_validator
+
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    ValidationError,
+    field_validator,
+    Field,
+)
+from datetime import datetime
 
 
 class InviteEmployee(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True, json_encoders={datetime: datetime.date}
+    )
 
     email: EmailStr
     first_name: str
     last_name: str
-    role: Literal["manager", "doctor"]
+    role: str
 
     @field_validator("first_name", "last_name", mode="before")
     @classmethod
@@ -42,3 +53,19 @@ class EmployeeUpdateScheme(BaseModel):
     last_name: Optional[str] = None
     phone_numper: Optional[str] = None
     calary: Optional[int] = None
+
+
+class DefaultUserListSchema(InviteEmployee):
+    phone_number: Optional[str] = None
+    join_at: datetime = Field(serialization_alias="register_date")
+
+
+# class UserListScheme(DefaultUserListSchema):
+#     doctor_records: Optional[list[ReadRecordScheme]] = Field(
+#         None, serialization_alias="d_records"
+#     )
+#     patient_records: Optional[list[ReadRecordScheme]] = Field(
+#         None,
+#         serialization_alias="p_records",
+#     )
+#     specialties: list[SpecialtyScheme]
