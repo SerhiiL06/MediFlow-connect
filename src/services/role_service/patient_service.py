@@ -54,7 +54,9 @@ class PatientService:
 
         return result
 
-    async def get_records(self, user_id, role: Literal["patient", "doctor"]):
-        query = await self.crud.record_list()
+    async def get_records(self, user_id):
+        filtering_data = {"patient_id": user_id}
+
+        query = await self.crud.record_list(filtering_data)
 
         return query

@@ -1,17 +1,22 @@
 from core.models.records import Record
 from src.repositories.ManagerRepository import ManagerRepository
+from src.repositories.RecordRepository import RecordRepository
 from fastapi import HTTPException
 
 
 class ManagerService:
     def __init__(self) -> None:
         self.crud = ManagerRepository()
+        self.records = RecordRepository()
 
     async def update_doctor(self, doctor_id, specialty):
         return await self.crud.update_doctor(doctor_id, specialty)
 
     async def get_records_list(self):
         return await self.crud.get_record_list()
+
+    async def get_ucomlete(self):
+        return await self.records.uncomplete_records()
 
     async def retrieve_record(self, record_id: int, user_id: int, role: str):
         result = self.crud.get_record_list()

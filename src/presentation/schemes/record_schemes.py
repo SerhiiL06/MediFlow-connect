@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator, Field
-
+from .user_schemes import DefaultUserListSchema
 from typing import Optional
 from datetime import datetime
 
@@ -34,3 +34,10 @@ class ReadRecordScheme(BaseModel):
     created_at: datetime
     patient_id: int
     doctor_id: Optional[int] = None
+
+
+class UncompleteRecord(BaseModel):
+    id: int
+    created_at: datetime = Field(serialization_alias="register_date")
+    description: str
+    patient: DefaultUserListSchema
