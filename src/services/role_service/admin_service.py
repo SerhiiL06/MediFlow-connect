@@ -27,7 +27,7 @@ class AdminService(ManagerService):
         token = self.token.dumps({"email": data.email})
 
         await self.redis.set_user_info(
-            data.email, data.first_name, data.last_name, data.role
+            data.email, data.first_name, data.last_name, data.role, data.phone_number
         )
 
         task.add_task(self.email.send_invation_link, data.email, token)
@@ -55,11 +55,17 @@ class AdminService(ManagerService):
 
         user_data = await self.redis.get_user_info(email)
 
+        if not user_data:
+            raise HTTPException(
+                status_code=404, detail={"message": "data doesnt exists"}
+            )
+
         data_to_save = {
             "email": email,
-            "first_name": codecs.decode(user_data[1]),
+            "first_name": codecs.decode(user_data[3]),
             "last_name": codecs.decode(user_data[2]),
-            "role": codecs.decode(user_data[0]),
+            "role": codecs.decode(user_data[1]),
+            "phone_number": codecs.decode(user_data[0]),
             "hashed_password": hash_pw,
         }
 

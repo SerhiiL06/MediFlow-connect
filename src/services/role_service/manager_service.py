@@ -18,6 +18,9 @@ class ManagerService:
     async def get_ucomlete(self):
         return await self.records.uncomplete_records()
 
+    async def get_user_records(self):
+        return await self.crud.record_list()
+
     async def retrieve_record(self, record_id: int, user_id: int, role: str):
         result = self.crud.get_record_list()
         if (
@@ -28,7 +31,7 @@ class ManagerService:
             return result
 
         return HTTPException(
-            status_code=404, detail={"message": "object doesnt exitsts"}
+            status_code=404, detail={"message": "object doesnt exists"}
         )
 
     async def to_appoint_doctor(self, record_id: int, doctor_id: str):

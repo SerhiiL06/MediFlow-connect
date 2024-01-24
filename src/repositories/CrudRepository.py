@@ -81,6 +81,8 @@ class SQLAchemyRepository(AbstractRepository):
 
             return {"code": 204, "message": "DELETE"}
 
+
+class UserRepository(AbstractRepository):
     async def get_user_by_email(self, email: str) -> User | None:
         async with session() as conn:
             query = select(User).where(User.email == email)
@@ -88,3 +90,11 @@ class SQLAchemyRepository(AbstractRepository):
             result = await conn.execute(query)
 
             return result.scalars().one_or_none()
+
+    async def get_my_profile(self, user_id: int) -> User:
+        async with session() as conn:
+            query = select(User).where(User.id == user_id)
+
+            user = await conn.execute(query)
+
+            return user.scalar_one()

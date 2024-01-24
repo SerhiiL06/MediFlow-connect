@@ -6,8 +6,10 @@ from src.presentation.schemes.user_schemes import (
     InviteEmployee,
     RegisterEmployeeScheme,
     EmployeeUpdateScheme,
+    ProfileScheme,
 )
 from src.services.role_service.admin_service import AdminService
+from src.services.user_service import UserService
 from src.services.auth_service import AuthService, current_user
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -60,3 +62,8 @@ async def update_doctor(
     service: Annotated[AdminService, Depends()],
 ):
     return await service.update_employee(emp_id, data)
+
+
+@user_router.get("/me", response_model=ProfileScheme)
+async def get_me(user: current_user, service: Annotated[UserService, Depends()]):
+    return await service.get_my_info(user.get("user_id"))

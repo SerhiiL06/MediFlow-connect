@@ -48,7 +48,6 @@ async def record_list(user: current_user, service: Annotated[RecordService, Depe
 @record_router.get(
     "/records/uncomplete",
     tags=STAFF,
-    # response_model=list[UncompleteRecord],
 )
 async def uncomplete_orders(
     user: current_user, service: Annotated[RecordService, Depends()]
@@ -60,11 +59,9 @@ async def uncomplete_orders(
 
 @record_router.get("/records/{record_id}", tags=AUTHENTICATED)
 async def get_record_info(
-    user: current_user, record_id: int, service: Annotated[ManagerService, Depends()]
+    user: current_user, record_id: int, service: Annotated[RecordService, Depends()]
 ):
-    return await service.retrieve_record(
-        record_id, user.get("user_id"), user.get("role")
-    )
+    return await service.retrieve_record(record_id, user)
 
 
 @record_router.put("/records/{record_id}/appoint-doctor", tags=["Admin", "Manager"])

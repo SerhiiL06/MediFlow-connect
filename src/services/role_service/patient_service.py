@@ -3,15 +3,16 @@ from core.models.records import Record
 import secrets
 from random import randint
 from src.repositories.RecordRepository import RecordRepository
+from src.repositories.CrudRepository import UserRepository
 from src.services.email_service import EmailService
 from src.utils.crypt import crypt
 from fastapi import HTTPException
-from typing import Literal
 
 
 class PatientService:
     def __init__(self) -> None:
-        self.crud = RecordRepository()
+        self.crud = UserRepository()
+        self.repo = RecordRepository()
         self.email = EmailService()
 
     async def register_record(self, data: CreateRecordScheme):
@@ -37,7 +38,7 @@ class PatientService:
 
         record_to_save = {"description": data.description}
 
-        record_id = await self.crud.submit_record_with_unregister_user(
+        record_id = await self.repo.submit_record_with_unregister_user(
             record_to_save, patient_to_save
         )
 
@@ -50,13 +51,13 @@ class PatientService:
 
         data_to_save.update({"patient_id": user_id})
 
-        result = await self.crud.create_model(Record, data_to_save)
+        result = await self.repo.create_model(Record, data_to_save)
 
         return result
 
     async def get_records(self, user_id):
         filtering_data = {"patient_id": user_id}
 
-        query = await self.crud.record_list(filtering_data)
+        query = await self.repo.record_list(filtering_data)
 
         return query

@@ -1,13 +1,13 @@
 from core.models.users import User, Specialty
 from core.models.records import Record
-from .CrudRepository import SQLAchemyRepository
+from .RecordRepository import RecordRepository
 from core.settings.connections import session
 from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload, joinedload
 from fastapi import HTTPException
 
 
-class ManagerRepository(SQLAchemyRepository):
+class ManagerRepository(RecordRepository):
     model = User
 
     async def update_doctor(self, user_id: int, specialty: str):
@@ -52,13 +52,3 @@ class ManagerRepository(SQLAchemyRepository):
     async def get_doctor_with_specialty(self, specialty: str) -> User:
         async with session() as conn:
             select(User).where(User.specialties)
-
-    async def get_record_list(self, filtering_data: dict) -> list[Record]:
-        async with session() as conn:
-            query = select(Record).options(
-                joinedload(Record.patient), joinedload(Record.doctor)
-            )
-
-            result = await conn.execute(query)
-
-            return result.mappings().unique().all()
