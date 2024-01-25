@@ -5,11 +5,11 @@ from itsdangerous import URLSafeSerializer
 from itsdangerous.exc import BadSignature
 
 from core.settings.main import settings
-from core.settings.redis import RedisTools
+from core.settings.redis import RedisTools, RedisPubSubService
 from core.models.users import User
 from src.services.email_service import EmailService
 from src.utils.crypt import crypt
-
+import json
 from .manager_service import ManagerService
 from src.repositories.AdminRepository import AdminRepository
 
@@ -20,17 +20,20 @@ class AdminService(ManagerService):
 
         self.token = URLSafeSerializer(settings.SECRET_KEY, salt="activate")
         self.redis = RedisTools()
+        self.predis = RedisPubSubService()
         self.email = EmailService()
         self.crud = AdminRepository()
 
-    async def generate_invitation_link(self, data, task: BackgroundTasks) -> dict:
+    async def generate_invitation_link(self, data) -> dict:
         token = self.token.dumps({"email": data.email})
 
         await self.redis.set_user_info(
             data.email, data.first_name, data.last_name, data.role, data.phone_number
         )
 
-        task.add_task(self.email.send_invation_link, data.email, token)
+        await self.predis.publish(
+            "invite", json.dumps({"email": data.email, "token": token})
+        )
 
         return {"message": "link was send", "code": "SEND"}
 

@@ -25,10 +25,9 @@ user_router = APIRouter(prefix="/users")
 )
 async def invite_employee(
     data: InviteEmployee,
-    background: BackgroundTasks,
     service: Annotated[AdminService, Depends()],
 ):
-    return await service.generate_invitation_link(data, background)
+    return await service.generate_invitation_link(data)
 
 
 @user_router.get(

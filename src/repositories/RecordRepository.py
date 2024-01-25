@@ -1,7 +1,7 @@
 from .CrudRepository import SQLAchemyRepository
 from core.settings.connections import session
-from sqlalchemy import insert, select, text, func, alias
-from sqlalchemy.orm import aliased, joinedload
+from sqlalchemy import insert, select, func
+from sqlalchemy.orm import aliased
 from core.models.records import Record
 from core.models.users import User
 
