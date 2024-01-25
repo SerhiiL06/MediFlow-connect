@@ -28,14 +28,14 @@ class RedisTools:
         return self.__CONNECT_POINT
 
 
-class RedisPubSubManager:
+class RedisPubSubService:
     __CONNECT_POINT = aioredis.from_url("redis://localhost")
 
-    async def connect(self):
+    def __init__(self):
         self.pubsub = self.__CONNECT_POINT.pubsub()
 
-    async def publish(self, room: str, message: str):
-        await self.__CONNECT_POINT.publish(str, message)
+    async def publish(self, channel: str, message: str):
+        await self.__CONNECT_POINT.publish(channel, message)
 
     async def subcribe(self, room: str):
         await self.pubsub.subscribe(room)
@@ -43,3 +43,18 @@ class RedisPubSubManager:
 
     async def unsub(self, room):
         await self.pubsub.unsubscribe(room)
+
+    async def listen(self):
+        while True:
+            message = await self.pubsub.subscribe()
+            if message is not None and message["type"] == "message":
+                for channel, callback in self.subscriptions:
+                    if message["channel"] == channel.name:
+                        callback(message["data"])
+
+    @property
+    def get_connect(self):
+        return self.__CONNECT_POINT
+
+
+redis = RedisPubSubService()

@@ -30,3 +30,15 @@ class EmailService:
         )
 
         await self.email.send_message(message)
+
+    async def send_success_message(self, email):
+        body = "Anything new"
+
+        message = MessageSchema(
+            subject="PubSub in move",
+            recipients=[email],
+            body=body,
+            subtype="html",
+        )
+
+        await self.email.send_message(message)
