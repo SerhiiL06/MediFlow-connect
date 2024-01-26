@@ -1,9 +1,8 @@
 from abc import ABC
 from core.settings.connections import session
-from core.models.base import Base
 from core.settings.connections import session
-from core.models.users import User
-from sqlalchemy import insert, select, update, delete
+from core.models.users import User, Specialty, association_table
+from sqlalchemy import insert, select, update, delete, func
 
 
 class AbstractRepository(ABC):
@@ -98,3 +97,34 @@ class UserRepository(AbstractRepository):
             user = await conn.execute(query)
 
             return user.scalar_one()
+
+    async def get_doctors(self):
+        async with session() as conn:
+            query = (
+                select(
+                    User.id,
+                    User.email,
+                    User.first_name,
+                    User.last_name,
+                )
+                .join(association_table)
+                .join(Specialty)
+                .where(User.role == "doctor")
+            )
+
+            result = await conn.execute(query)
+
+            return result.mappings().all()
+
+    async def get_patients(self):
+        async with session() as conn:
+            info = func.concat(User.first_name + " " + User.last_name).label("USER_FL")
+            query = (
+                select(User.id, info, User.email, User.phone_number)
+                .where(User.role == "patient")
+                .order_by(User.join_at.desc())
+            )
+
+            result = await conn.execute(query)
+
+            return result.mappings().all()

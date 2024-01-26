@@ -66,3 +66,13 @@ async def update_doctor(
 @user_router.get("/me", response_model=ProfileScheme)
 async def get_me(user: current_user, service: Annotated[UserService, Depends()]):
     return await service.get_my_info(user.get("user_id"))
+
+
+@user_router.get("/doctors", tags=["Test"])
+async def doctors(service: Annotated[UserService, Depends()]):
+    return await service.get_doctor_list()
+
+
+@user_router.get("/patients", tags=["Test"])
+async def patients(service: Annotated[UserService, Depends()]):
+    return await service.get_patient_list()

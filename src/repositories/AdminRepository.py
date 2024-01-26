@@ -1,6 +1,6 @@
 from .ManagerRepository import ManagerRepository
 from core.settings.connections import session
-from sqlalchemy import select, func, case
+from sqlalchemy import select, delete
 
 from core.models.users import User
 from core.models.records import Record
@@ -32,3 +32,17 @@ class AdminRepository(ManagerRepository):
             result = await conn.execute(query)
 
             return result.unique().scalar_one_or_none()
+
+    async def delete_model(self, object_id):
+        async with session() as conn:
+            recods = delete(Record).where(Record.patient_id == object_id)
+
+            await conn.execute(recods)
+
+            query = delete(User).where(User.id == object_id)
+
+            await conn.execute(query)
+
+            await conn.commit()
+
+            return {"message": "DELETE", "code": "204"}

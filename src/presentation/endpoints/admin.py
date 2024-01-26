@@ -24,3 +24,8 @@ async def get_user_info(user_id: int, service: Annotated[AdminService, Depends()
 @admin_router.post("/pub")
 async def pub_message(message: str, service: Annotated[RedisPubSubService, Depends()]):
     await service.publish("test", message)
+
+
+@admin_router.delete("/users/{user_id}/delete")
+async def delete_user(user_id: int, service: Annotated[AdminService, Depends()]):
+    return await service.delete_user(user_id)

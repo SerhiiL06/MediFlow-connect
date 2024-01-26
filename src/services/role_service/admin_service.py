@@ -93,6 +93,9 @@ class AdminService(ManagerService):
         data_to_update = data.model_dump(exclude_none=True)
         return await self.crud.update_employee(emp_id, data_to_update)
 
+    async def delete_user(self, object_id: int):
+        return await self.crud.delete_model(object_id)
+
     async def get_user_list(self, role: str):
         result = await self.crud.list_model(role)
 
