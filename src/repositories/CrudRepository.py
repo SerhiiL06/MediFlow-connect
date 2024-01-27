@@ -3,6 +3,7 @@ from core.settings.connections import session
 from core.settings.connections import session
 from core.models.users import User, Specialty, association_table
 from sqlalchemy import insert, select, update, delete, func
+from sqlalchemy.orm import selectinload
 
 
 class AbstractRepository(ABC):
@@ -101,20 +102,15 @@ class UserRepository(AbstractRepository):
     async def get_doctors(self):
         async with session() as conn:
             query = (
-                select(
-                    User.id,
-                    User.email,
-                    User.first_name,
-                    User.last_name,
-                )
+                select(User)
                 .join(association_table)
                 .join(Specialty)
-                .where(User.role == "doctor")
+                .filter(User.role == "doctor")
+                .options(selectinload(User.specialties))
             )
-
             result = await conn.execute(query)
 
-            return result.mappings().all()
+            return result.scalars().all()
 
     async def get_patients(self):
         async with session() as conn:

@@ -1,6 +1,6 @@
 from .CrudRepository import SQLAchemyRepository
 from core.settings.connections import session
-from sqlalchemy import insert, select, func
+from sqlalchemy import insert, select, func, or_
 from sqlalchemy.orm import aliased
 from core.models.records import Record
 from core.models.users import User
@@ -43,6 +43,15 @@ class RecordRepository(SQLAchemyRepository):
 
                 if role == "patient":
                     query = query.filter(self.patient_alias.id == user_id)
+
+                print(filtering_data)
+                if filtering_data.get("email"):
+                    query = query.filter(
+                        or_(
+                            self.doctor_alias.email == filtering_data.get("email"),
+                            self.patient_alias.email == filtering_data.get("email"),
+                        )
+                    )
                 result = await conn.execute(query)
 
                 return result.mappings().all()

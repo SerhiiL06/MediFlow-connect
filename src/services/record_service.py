@@ -7,10 +7,13 @@ class RecordService:
     def __init__(self):
         self.crud = RecordRepository()
 
-    async def get_records(self, user_id: int, role: str, uncomplete=False):
+    async def get_records(self, user_id: int, role: str, email=None, uncomplete=False):
         filtering_data = {}
 
-        return await self.crud.record_list(filtering_data, role, user_id, uncomplete)
+        if email:
+            filtering_data.update({"email": email})
+
+        return await self.crud.record_list(role, user_id, filtering_data, uncomplete)
 
     async def retrieve_record(self, record_id: int, user: dict):
         record = await self.crud.record_detail(record_id)

@@ -48,6 +48,10 @@ class User(Base):
     )
     __table_args__ = (UniqueConstraint("email", "phone_number"),)
 
+    @property
+    def full_name(self):
+        return self.first_name + self.last_name
+
 
 class WorkingDays(Base):
     __tablename__ = "working_days"

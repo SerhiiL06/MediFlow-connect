@@ -4,7 +4,7 @@ from sqlalchemy import select, delete
 
 from core.models.users import User
 from core.models.records import Record
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, aliased
 
 
 class AdminRepository(ManagerRepository):
@@ -18,6 +18,9 @@ class AdminRepository(ManagerRepository):
             return result.scalars().all()
 
     async def retrieve_model(self, user_id: int) -> User | None:
+        doctor = aliased(User)
+        patient = aliased(User)
+
         async with session() as conn:
             query = (
                 select(User)
@@ -31,7 +34,7 @@ class AdminRepository(ManagerRepository):
 
             result = await conn.execute(query)
 
-            return result.unique().scalar_one_or_none()
+            return result.mappings().unique().all()
 
     async def delete_model(self, object_id):
         async with session() as conn:

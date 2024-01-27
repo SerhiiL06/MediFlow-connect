@@ -11,6 +11,7 @@ from pydantic import (
     Field,
 )
 from datetime import datetime
+from .specialty_schemes import SpecialtyScheme
 
 
 class InviteEmployee(BaseModel):
@@ -78,3 +79,13 @@ class ProfileScheme(BaseModel):
     email: EmailStr
     phone_number: Optional[str] = None
     join_at: datetime
+
+
+class DoctorScheme(BaseModel):
+    id: int
+    email: EmailStr
+    first_name: str
+    last_name: str
+    phone_number: Optional[str] = None
+
+    specialties: list[SpecialtyScheme]
