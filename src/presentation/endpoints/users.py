@@ -26,8 +26,9 @@ user_router = APIRouter(prefix="/users")
     tags=["register"],
     status_code=202,
 )
-@check_role([STAFF])
+@check_role(STAFF)
 async def invite_employee(
+    user: current_user,
     data: InviteEmployee,
     service: Annotated[AdminService, Depends()],
 ):

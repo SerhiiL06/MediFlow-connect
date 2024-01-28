@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from redis import asyncio as aioredis
+import codecs
 
 
 class RedisTools:
@@ -11,14 +12,25 @@ class RedisTools:
         if result:
             await self.clean_arr(email)
 
-        await self.__CONNECT_POINT.lpush(
-            email, first_name, last_name, role, phone_number
+        await self.__CONNECT_POINT.hset(
+            name=email,
+            mapping={
+                "first_name": first_name,
+                "last_name": last_name,
+                "role": role,
+                "phone_number": phone_number,
+            },
         )
 
     async def get_user_info(self, email):
-        data = await self.__CONNECT_POINT.lrange(email, 0, 3)
+        data = await self.__CONNECT_POINT.hgetall(email)
 
-        return data
+        encode_data = {}
+
+        for k, v in data.items():
+            encode_data[codecs.decode(k)] = codecs.decode(v)
+
+        return encode_data
 
     async def clean_arr(self, email):
         await self.__CONNECT_POINT.delete(email)

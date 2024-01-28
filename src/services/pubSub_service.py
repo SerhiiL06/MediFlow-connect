@@ -35,7 +35,6 @@ class PubSubService:
                     await self.email.send_user_creditables(cred["email"], cred["pw"])
 
                 elif codecs.decode(message.get("channel")) == "invite":
-                    print("here")
                     data = json.loads(codecs.decode(message.get("data")))
                     await self.email.send_invation_link(
                         data.get("email"), data.get("token")

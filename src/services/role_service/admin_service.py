@@ -1,5 +1,3 @@
-import codecs
-
 from fastapi import BackgroundTasks, HTTPException
 from itsdangerous import URLSafeSerializer
 from itsdangerous.exc import BadSignature
@@ -26,6 +24,14 @@ class AdminService(ManagerService):
 
     async def generate_invitation_link(self, data) -> dict:
         token = self.token.dumps({"email": data.email})
+
+        check = await self.crud.get_user_by_email(data.email)
+
+        if check:
+            raise HTTPException(
+                status_code=400,
+                detail={"message": "user with this email already exists"},
+            )
 
         await self.redis.set_user_info(
             data.email, data.first_name, data.last_name, data.role, data.phone_number
@@ -65,10 +71,10 @@ class AdminService(ManagerService):
 
         data_to_save = {
             "email": email,
-            "first_name": codecs.decode(user_data[3]),
-            "last_name": codecs.decode(user_data[2]),
-            "role": codecs.decode(user_data[1]),
-            "phone_number": codecs.decode(user_data[0]),
+            "first_name": user_data.get("first_name"),
+            "last_name": user_data.get("last_name"),
+            "role": user_data.get("role"),
+            "phone_number": user_data.get("phone_number"),
             "hashed_password": hash_pw,
         }
 
