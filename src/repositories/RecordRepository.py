@@ -44,7 +44,6 @@ class RecordRepository(SQLAchemyRepository):
                 if role == "patient":
                     query = query.filter(self.patient_alias.id == user_id)
 
-                print(filtering_data)
                 if filtering_data.get("email"):
                     query = query.filter(
                         or_(

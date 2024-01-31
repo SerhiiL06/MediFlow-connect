@@ -1,2 +1,11 @@
-The Mediflow Connect project
-Soming soon...
+<h2>Mediflow</h2>
+
+Mediflow is a FastAPI-based project designed to manage user-related functionalities for a medical application. It offers various endpoints to handle user registration, authentication, profile management, and user role-based permissions.
+
+Features
+
+    •	User Registration: Allows new employees to register with the system using invitation tokens.
+    •	User Authentication: Generates access tokens for registered users using OAuth2 password grant flow.
+    •	Profile Management: Enables users to view and update their profiles.
+    •	Role-based Permissions: Implements role-based access control (RBAC) for different user roles like staff, authenticated users, doctors, and managers.
+    •	Doctor and Patient Listings: Provides endpoints to retrieve lists of doctors and patients.<h2>
