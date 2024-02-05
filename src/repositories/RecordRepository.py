@@ -2,7 +2,7 @@ from .CrudRepository import SQLAchemyRepository
 from core.settings.connections import session
 from sqlalchemy import insert, select, func, or_
 from sqlalchemy.orm import aliased
-from core.models.records import Record
+from core.models.records import Record, DoctorOpinion
 from core.models.users import User
 
 
@@ -31,11 +31,13 @@ class RecordRepository(SQLAchemyRepository):
                         self.doctor_alias.email.label("doctor_email"),
                         self.patient_alias.email.label("patient_email"),
                         pat_info,
+                        DoctorOpinion,
                     )
                     .join(self.doctor_alias, Record.doctor_id == self.doctor_alias.id)
                     .join(
                         self.patient_alias, Record.patient_id == self.patient_alias.id
                     )
+                    .outerjoin(DoctorOpinion, DoctorOpinion.record_id == Record.id)
                 )
 
                 if role == "doctor":
@@ -45,6 +47,7 @@ class RecordRepository(SQLAchemyRepository):
                     query = query.filter(self.patient_alias.id == user_id)
 
                 if filtering_data.get("email"):
+                    print("here")
                     query = query.filter(
                         or_(
                             self.doctor_alias.email == filtering_data.get("email"),

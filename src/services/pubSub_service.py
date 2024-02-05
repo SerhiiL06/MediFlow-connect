@@ -16,7 +16,7 @@ class PubSubService:
         self.psub = self.redis.pubsub
 
     async def subscribe_test(self):
-        await self.psub.subscribe("test", "register", "document", "invite")
+        await self.psub.subscribe("test", "register", "document", "invite", "opinion")
 
         while not shutdown.is_set():
             message = await self.psub.get_message(
@@ -44,6 +44,12 @@ class PubSubService:
                     with open("document.txt", "a") as file:
                         data = message.get("data").decode("utf-8")
                         file.writelines(f"{data}\n")
+
+                elif message.get("channel").decode("utf-8") == "opinion":
+                    print("here")
+                    await self.email.send_notification_about_opinion(
+                        message.get("data").decode("utf-8")
+                    )
 
             await asyncio.sleep(0.001)
 

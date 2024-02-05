@@ -2,7 +2,11 @@ from .CrudRepository import SQLAchemyRepository
 from core.models.records import Record, DoctorOpinion
 from core.settings.connections import session
 from sqlalchemy import select, insert
+from sqlalchemy.orm import joinedload
+from sqlalchemy.exc import IntegrityError
+from asyncpg.exceptions import UniqueViolationError
 from fastapi import HTTPException
+from core.models.users import User
 
 
 class DoctorRepository(SQLAchemyRepository):
@@ -13,17 +17,24 @@ class DoctorRepository(SQLAchemyRepository):
     async def create_opinion(self, data: dict):
         async with session() as conn:
 
-            insert_query = insert(DoctorOpinion).values(**data).returning("*")
+            try:
+                insert_query = insert(DoctorOpinion).values(**data).returning("*")
 
-            result = await conn.execute(insert_query)
+                result = await conn.execute(insert_query)
 
-            await conn.commit()
-
-            return result.mappings()
+                await conn.commit()
+                return result.mappings().one()
+            except IntegrityError as e:
+                conn.rollback()
+                raise HTTPException(status_code=400, detail={"message": "unique error"})
 
     async def check_record(self, record_id: int, doctor_id) -> Record:
         async with session() as conn:
-            query = select(Record).where(Record.id == record_id)
+            query = (
+                select(Record)
+                .options(joinedload(Record.patient))
+                .where(Record.id == record_id)
+            )
 
             result = await conn.execute(query)
 

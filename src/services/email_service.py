@@ -42,3 +42,12 @@ class EmailService:
         )
 
         await self.email.send_message(message)
+
+    async def send_notification_about_opinion(self, email):
+        body = "Dear client, your opinion is ready, please log into your profile and check this"
+
+        message = MessageSchema(
+            subject="Opinion", recipients=[email], body=body, subtype="html"
+        )
+
+        await self.email.send_message(message)
