@@ -1,8 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, UploadFile, Query
 from src.services.role_service.patient_service import PatientService
 from src.services.record_service import RecordService
 from src.services.role_service.manager_service import ManagerService
 from src.services.auth_service import current_user
+from src.services.doctor_service import DoctorService
 from src.presentation.schemes.record_schemes import (
     CreateRecordScheme,
     SimplyRecordScheme,
@@ -77,6 +78,21 @@ async def get_record_info(
 @record_router.put("/records/{record_id}/appoint-doctor", tags=["records"])
 @check_role(STAFF)
 async def appoint_doctor(
-    record_id: int, doctor_id: int, service: Annotated[ManagerService, Depends()]
+    user: current_user,
+    record_id: int,
+    doctor_id: int,
+    service: Annotated[ManagerService, Depends()],
 ):
     return await service.to_appoint_doctor(record_id, doctor_id)
+
+
+@record_router.post("/records/{record_id}/send-opinion", tags=["records"])
+@check_role(["doctor"])
+async def create_opinion(
+    record_id: int,
+    user: current_user,
+    file: UploadFile,
+    service: Annotated[DoctorService, Depends()],
+    short_opinion: str = Query(min_length=10, max_length=50),
+):
+    return await service.add_opinion(record_id, user, file, short_opinion)

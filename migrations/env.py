@@ -5,7 +5,7 @@ from sqlalchemy import engine_from_config, pool
 
 from core.models.base import Base
 from core.models.users import Specialty, User, WorkingDays, association_table
-from core.models.records import Record
+from core.models.records import Record, DoctorOpinion
 from core.settings.main import sqlsetting
 
 # this is the Alembic Config object, which provides

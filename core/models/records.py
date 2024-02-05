@@ -1,5 +1,5 @@
 from .base import Base
-from .common import create, deffalse
+from .common import create
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, ForeignKey
 
@@ -20,3 +20,12 @@ class Record(Base):
     doctor = relationship(
         "User", back_populates="doctor_records", foreign_keys=[doctor_id]
     )
+
+
+class DoctorOpinion(Base):
+    __tablename__ = "doctor_opinions"
+
+    short_opinion: Mapped[str] = mapped_column(comment="The short text opinion")
+    opinion: Mapped[str]
+    record_id: Mapped[int] = mapped_column(ForeignKey("records.id"))
+    created_at: Mapped[create]

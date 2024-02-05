@@ -6,6 +6,7 @@
 Pipfile
 Pipfile.lock
 *.rdb
+media
 
 # Icon must end with two \r
 Icon
